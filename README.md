@@ -3,9 +3,11 @@ This project is an easily customizable and adaptable website template built on U
 
 The template's front-end is provided in Arabic, making it an excellent choice for any entity (government, private sector, non-profit organizations) that needs to create a public-facing website in Arabic.
 
+![Home](/wwwroot/media/screenshot.png)
+
 ### Developed By:
 This template is developed by <a id='ssFeatures' href='https://interactive.sa'>Interactive Saudi Arabia</a>, Your Software Development Partner In Saudi Arabia.
-![Interactive](https://partner.kentico.com/getmedia/aa454e01-1437-4661-abd8-2680024479c7/interactive-logo.png)
+![Interactive](/wwwroot/media/logo.png)
 
 ## Features
 * Mobile-friendly design
