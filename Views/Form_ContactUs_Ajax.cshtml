@@ -1,0 +1,70 @@
+﻿@model ContactUsViewModel;
+@using Umbraco.Cms.Web.Common
+
+<form asp-action="ContactUs" asp-controller="Forms"
+      id="form_contactus@(Model.FormName)"
+      class="form_ajax contactForm7"
+      data-ajax="true"
+      data-ajax-method="POST"
+      data-ajax-mode="replace"
+      data-ajax-loading="#DotNetloading"
+      data-ajax-update="#contactus_msg@(Model.FormName)">
+
+    @Html.AntiForgeryToken()
+    
+    @Html.HiddenFor(m => m.Culture)
+    @Html.HiddenFor(m => m.FormID)
+    @Html.HiddenFor(m => m.FormName)
+    @Html.HiddenFor(m => m.Subject)
+    @Html.HiddenFor(m => m.SendToEmail)
+
+    <div class="row">
+
+        <div class="col-md-4">
+            <div class="inputText required">
+                <label class="form-label label">
+                    @SharedHelper.GetDictionaryValue("FullName", Model.Umbraco)
+                </label>
+                <input asp-for="FullName" class="form-control">
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="inputText required">
+                <label class="form-label label">
+                    @SharedHelper.GetDictionaryValue("Email", Model.Umbraco)
+                </label>
+                <input asp-for="Email" class="form-control">
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="inputText required">
+                <label class="form-label label">
+                    @SharedHelper.GetDictionaryValue("Mobile", Model.Umbraco)
+                </label>
+                <input asp-for="Mobile" class="form-control">
+                <span asp-validation-for="Mobile" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="inputText required">
+                <label class="form-label label">
+                    @SharedHelper.GetDictionaryValue("Message", Model.Umbraco)
+                </label>
+                <textarea asp-for="Message" class="form-control"></textarea>
+                <span asp-validation-for="Message" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="green-btn leftSide">
+                <button type="submit" class="search-area-a mt-30 btn btn-primary btnForm btnFormAjax7">@SharedHelper.GetDictionaryValue("Send", Model.Umbraco)</button>
+            </div>
+        </div>
+    </div>
+    
+</form>
+
+<div id="contactus_msg@(Model.FormName)" class="col-12 input-group7">
+    @Html.Raw(Model.ResultMessage)
+</div>

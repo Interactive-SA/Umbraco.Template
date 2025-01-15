@@ -1,0 +1,54 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Dt_NewsItem>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+
+@{
+    Layout = "Layout_Master.cshtml";
+}
+
+@if (UmbracoContext != null && UmbracoContext.IsFrontEndUmbracoRequest())
+{
+    if (Model != null)
+    {
+        <section class="newsDetails">
+            <div class="container">
+                <div class="row">
+                    <div class="headNews">
+                        <h2 class="titleNews">
+                            @Html.Raw(Model.ToPageTitle())
+                        </h2>
+                        <div class="date">
+                            <span>
+                                <img src="/css/assets/images/services/date.svg" alt="">
+                                @Model.Date.ToDateTime()
+                            </span>
+                        </div>
+                    </div>
+                    <div class="imgNews">
+                        <img src="@Model.Image.ToIconURL()" alt="">
+                    </div>
+                    <div class="content">
+                        <div class="p20">
+                            @Html.Raw(Model.Details)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+}
+else
+{
+    if (Model != null)
+    {
+        <ul class="admin_ul">
+            <li>
+                @Model.ToPageTitle()
+            </li>
+        </ul>
+    }
+
+    <div class="alert alert-warning admin_alert" role="alert">
+        Click here to fill info or data source
+    </div>
+}

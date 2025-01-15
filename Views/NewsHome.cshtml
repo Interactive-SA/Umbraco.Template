@@ -1,0 +1,84 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@using Custom.ViewModel
+
+@{
+    var countOfNews = Model.Content.Value("countOfNews").ToInt32();
+}
+
+@if (countOfNews > 0)
+{
+    <section class="newsHome">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-12 ">
+                    <div class=" top-sec">
+                        <h2 class=" mainTitle ">
+                            أحدث الأخبار
+                        </h2>
+                    </div>
+                </div>
+                <!-- end head -->
+
+                @{
+                    var news = Umbraco
+                    .Content(Guid.Parse("2b9ccbeb-7af6-458d-bed0-eef3b7d11600"))?
+                    //.ContentAtRoot().FirstOrDefault()
+                    //.ChildrenOfType("DT_NewsItem")
+                    .Children<Dt_NewsItem>()?
+                    .Where(x => x.IsVisible())
+                    .OrderByDescending(x => x.Date)
+                    .Take(countOfNews);
+                }
+
+                @if (news?.Count() > 0)
+                {
+                    @foreach (Dt_NewsItem item in news)
+                    {
+                        <div class="col-lg-4">
+                            <div class="boxNews">
+                                <div class="newsImg">
+                                    <img src="@item.Image.ToIconURL(SharedHelper.SharedLogo)" alt="">
+                                </div>
+                                <!-- end img -->
+                                <div class="newsTxt">
+                                    <h4 class="">
+                                        @Html.Raw(item.ToPageTitle().ToTrimLetters(80))
+                                    </h4>
+                                    <div class="dateMA">
+                                        <span>@item.Date.ToDateTime()</span>
+                                    </div>
+                                </div>
+                                <a href="@item.Url()" class="stretched-link"></a>
+                                <!-- end news text -->
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-lg-12">
+                        <div class="alert alert-warning NoRecords">
+                            @SharedHelper.GetDictionaryValue("ComingSoon", Umbraco)
+                        </div>
+                    </div>
+                }
+
+                <div class="col-12 ">
+                    <div class="white-btn center ">
+                        <a href="@SharedHelper.LangURL/media-center/news/" class="">
+                            <span>
+                                عرض جميع الأخبار
+                            </span>
+                            <img src="/css/assets/images/shared/arrow-left-black.svg" alt="">
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- end section of news -->
+}

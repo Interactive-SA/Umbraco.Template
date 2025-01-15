@@ -1,0 +1,69 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@using Custom.ViewModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    var query = HttpContextAccessor?.HttpContext?.Request?.Query;
+    var blockModel = new BlockGridViewModel<Dt_Faqitem>(Model, Umbraco, Dt_Faqitem.ModelTypeAlias, query);
+    var List = blockModel.List;
+    List = List.OrderBy(p => p.Order).ToList();
+}
+
+<section class="inContent">
+    <div class="container">
+        <div class="box-white">
+            <div class="row">
+
+                <section class="innerpages">
+                    <div class="campaignParent FAQSParent">
+
+                        <div class="contentWrapper">
+                            <div class="row">
+
+                                <div class="col-lg-12">
+                                    <div class="accordion accordionFAQ" id="accordionExample">
+
+                                        @if (List?.Count > 0)
+                                        {
+                                            foreach (var item in List)
+                                            {
+                                                <div class="card">
+                                                    <div class="card-header" id="headingTwo@(item.Id)">
+                                                        <h2 class="mb-0">
+                                                            <button class=" btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo@(item.Id)" aria-expanded="false" aria-controls="collapseTwo@(item.Id)">
+                                                                @Html.Raw(item.ToPageTitle())
+                                                            </button>
+                                                        </h2>
+                                                    </div>
+                                                    <div id="collapseTwo@(item.Id)" class="collapse" aria-labelledby="headingTwo@(item.Id)" data-parent="#accordionExample">
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-md-12 faq_body">
+                                                                    @Html.Raw(item.Answer)
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @await Html.PartialAsync("_NoRecords")
+                                        }
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,29 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@{
+    Layout = "Layout_Master.cshtml";
+
+    var ShowComingSoon = false;
+    if (Model != null)
+    {
+        ShowComingSoon = Model.Value<bool>("ShowComingSoon");
+    }
+}
+
+@if (ShowComingSoon)
+{
+    <section class="inContent">
+        <div class="soon">
+            <h2>
+                @SharedHelper.GetDictionaryValue("ComingSoon", Umbraco)
+            </h2>
+            <img src="/css/assets/images/coming-soon.svg">
+        </div>
+    </section>
+}
+else
+{
+    @* will display the widgets here *@
+}

@@ -1,0 +1,61 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@using Custom.ViewModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    var query = HttpContextAccessor?.HttpContext?.Request?.Query;
+    var blockModel = new BlockGridViewModel<Dt_NewsItem>(Model, Umbraco, Dt_NewsItem.ModelTypeAlias, query);
+    var List = blockModel.List;
+    List = List.OrderByDescending(p => p.Date).ToList();
+}
+
+<section class="newsPage">
+    <div class="container">
+
+        <div class="row">
+
+            @if (List?.Count > 0)
+            {
+                foreach (var item in List)
+                {
+                    <div class="col-md-4">
+                        <div class="WSCard">
+                            <div class="img">
+                                <img src="@item.Image.ToIconURL()" alt="">
+                            </div>
+                            <div class="txt">
+                                <h3 class="tite">
+                                    @Html.Raw(item.ToPageTitle().ToTrimLetters(80))
+                                </h3>
+                                <p class="p16">
+                                    @Html.Raw(item.Details.ToTrimLetters(200))
+                                </p>
+                                <div class="date">
+                                    <span>
+                                        <img src="/css/assets/images/services/date.svg" alt="">
+                                        @item.Date.ToDateTime()
+                                    </span>
+                                </div>
+                                <div class="white-btn">
+                                    <a href="@item.Url()">
+                                        <span>اقرأ المزيد</span>
+                                        <img src="/css/assets/images/shared/arrow-left-black.svg" alt="">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <!-- End Boxes -->
+            }
+            else
+            {
+                @await Html.PartialAsync("_NoRecords")
+            }
+
+        </div>
+
+    </div>
+</section>

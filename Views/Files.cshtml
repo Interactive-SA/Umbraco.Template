@@ -1,0 +1,61 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@using Custom.ViewModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    var query = HttpContextAccessor?.HttpContext?.Request?.Query;
+    var blockModel = new BlockGridViewModel<Dt_FilesItem>(Model, Umbraco, Dt_FilesItem.ModelTypeAlias, query);
+    var List = blockModel.List;
+    List = List.OrderByDescending(p => p.Date).ToList();
+}
+
+<section class="DigitalLibrary">
+    <div class="container">
+
+        <div class="row">
+
+            @if (List?.Count > 0)
+            {
+                foreach (var item in List)
+                {
+                    var icon = "/css/assets/images/internal/gallery/pdfIcon.svg";
+
+                    if (item.File.ToIconURL().Contains(".pdf"))
+                    {
+                        icon = "/css/assets/images/internal/gallery/pdfIcon.svg";
+                    }
+                    else if (item.File.ToIconURL().Contains(".docx"))
+                    {
+                        icon = "/css/assets/images/internal/gallery/wordIcon.svg";
+                    }
+                    <div class="col-md-4">
+                        <div class="WSCard reportPdf">
+                            <div class="txt">
+                                <h3 class="tite">
+                                    @Html.Raw(item.ToPageTitle())
+                                </h3>
+                                <div class="date">
+                                    @Html.Raw(item.Details)
+                                </div>
+                                <div class="white-btn">
+                                    <a href="@item.File.ToIconURL()" target="_blank">
+                                        <span> تحميل</span>
+                                        <img src="/css/assets/images/shared/pdf.svg" alt="" />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                @await Html.PartialAsync("_NoRecords")
+            }
+
+        </div>
+
+    </div>
+</section>

@@ -1,0 +1,95 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@{
+    Layout = "Layout_Master.cshtml";
+
+    var ShowComingSoon = false;
+    if (Model != null)
+    {
+        ShowComingSoon = Model.Value<bool>("ShowComingSoon");
+    }
+
+    var master = (Dt_HomePage)Umbraco.ContentAtRoot().FirstOrDefault();
+}
+
+@if (ShowComingSoon)
+{
+    <section class="inContent">
+        <div class="soon">
+            <h2>
+                @SharedHelper.GetDictionaryValue("ComingSoon", Umbraco)
+            </h2>
+            <img src="/css/assets/images/coming-soon.svg">
+        </div>
+    </section>
+}
+else
+{
+    @* will display the widgets here *@
+}
+
+@{
+    var BannersList = master?.BannersList
+    .Where(p => !p.Hide)
+    .Where(p =>
+        (p.PublishFrom == DateTime.MinValue && p.PublishTo == DateTime.MinValue)
+    || (p.PublishFrom <= DateTime.Now && p.PublishTo >= DateTime.Now)
+    || (p.PublishFrom <= DateTime.Now && p.PublishTo == DateTime.MinValue)
+    || (p.PublishFrom == DateTime.MinValue && p.PublishTo >= DateTime.Now)
+    )
+    .OrderBy(p => p.Value<int>("SortOrder"));
+}
+
+@if (BannersList?.Count() > 0)
+{
+    foreach (Elm_Banner item in BannersList)
+    {
+        var video = item.Video.ToIconURL();
+        <section class="bannerMenu">
+            <div class="contentBanner">
+                <div class="bg-video-wrap">
+                    @if (video != SharedHelper.SharedLogo)
+                    {
+                        <video autoplay loop muted>
+                            <source src="@video" type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    }
+                    else
+                    {
+                        <img src="@item.LinkImage.ToIconURL(SharedHelper.SharedLogo)" alt="">
+                    }
+                </div>
+                <div class="container">
+                    <div class="BNRtxt">
+                        @if (!string.IsNullOrEmpty(item.LinkTitle))
+                        {
+                            <h1>
+                                @Html.Raw(item.LinkTitle)
+                            </h1>
+                        }
+                        @if (!string.IsNullOrEmpty(item.LinkDetails))
+                        {
+                            <p>
+                                @Html.Raw(item.LinkDetails)
+                            </p>
+                        }
+                        @if (!string.IsNullOrEmpty(item.LinkExternalUrl?.Url))
+                        {
+                            <div class="green-btn">
+                                <a href="@item.LinkExternalUrl.Url" target="@item.LinkExternalUrl?.Target" class="">
+                                    <span>
+                                        @SharedHelper.GetDictionaryValue("Learn more", Umbraco)
+                                    </span>
+                                    <img src="/css/assets/images/shared/arrow-left.svg" alt="">
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+}

@@ -1,0 +1,92 @@
+﻿@using Umbraco.Cms.Core.Services
+@using Microsoft.Extensions.Options
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@{
+    Layout = null;
+
+    bool IsArabic = true;
+    var ShowComingSoon = false;
+
+    try
+    {
+        if (Model != null)
+        {
+            ShowComingSoon = Model.Value<bool>("ShowComingSoon");
+        }
+
+        if (Model != null && !string.IsNullOrEmpty(Model.GetCultureFromDomains()))
+        {
+            if (Model.GetCultureFromDomains().ToStringNull().ToLower().Contains("en"))
+            {
+                IsArabic = false;
+            }
+            else
+            {
+                IsArabic = true;
+            }
+
+            var link = (Umbraco.Cms.Core.Models.Link)Model.Value("redirectURL");
+            if (link != null)
+            {
+                Context.Response.Redirect(Url.Content(link.ToLinkURL()));
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        SharedHelper.LogException(ex);
+    }
+    string Lang = IsArabic ? "ar" : "en";
+}
+
+<!DOCTYPE html>
+<html lang="@Lang">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    @await Html.PartialAsync("_SEO")
+
+    @* <partial name="_Styles" /> *@
+    @await Html.PartialAsync("_Styles")
+
+    @await RenderSectionAsync("Styles", required: false)
+
+    <script src="/scripts/jQuery.js"></script>
+
+</head>
+
+<body class="@Model?.Value("CssClass")">
+
+    @await Html.PartialAsync("_Header")
+
+    @if (!ShowComingSoon)
+    {
+        @await Html.PartialAsync("_Breadcrumb")
+    }
+
+    @RenderBody()
+
+    @if (!ShowComingSoon)
+    {
+        @await Html.PartialAsync("PageContent")
+
+        @await Html.PartialAsync("PageBlockGrid")
+
+        @await Html.PartialAsync("PageBlockLayout")
+
+        @await Html.PartialAsync("_SharingIcons")
+    }
+
+    @await Html.PartialAsync("_Footer")
+
+    @* <partial name="Scripts" /> *@
+    @await Html.PartialAsync("_Scripts")
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

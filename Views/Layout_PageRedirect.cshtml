@@ -1,0 +1,38 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+
+@{
+    Layout = "Layout_Master.cshtml";
+}
+
+<style>
+    .breadcrumb {
+        display:none !important;
+    }
+</style>
+
+@if (Model != null && Model.Value<bool>("ShowComingSoon"))
+{
+    <section class="inContent">
+        <div class="soon">
+            <h2>
+                @SharedHelper.GetDictionaryValue("ComingSoon", Umbraco)
+            </h2>
+            <img src="/css/assets/images/coming-soon.svg">
+        </div>
+    </section>
+}
+else
+{
+    @* @await Html.PartialAsync("_Breadcrumb") *@
+
+    <section class="inContent">
+        <div class="soon">
+            <h2>
+                @SharedHelper.GetDictionaryValue("PageNotFound", Umbraco)
+            </h2>
+            <img src="/css/assets/images/coming-soon.svg">
+        </div>
+    </section>
+}

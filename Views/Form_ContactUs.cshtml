@@ -1,0 +1,101 @@
+﻿@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@using Custom.ViewModel
+@inject IPublishedValueFallback PublishedValueFallback
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
+
+@{
+    var contact_us = new ContactUsViewModel();
+    contact_us.Culture = SharedHelper.Culture;
+    contact_us.Umbraco = Umbraco;
+    contact_us.FormName = Model.Content.ContentType.Alias;
+    contact_us.Subject = Model.Content.Value("Subject").ToStringNull();
+    contact_us.SendToEmail = Model.Content.Value("SendToEmail").ToStringNull();
+
+    var title = Model.Content.Value("title").ToStringNull();
+
+
+    // List<string> types = new List<string>();
+
+    // types.Add(Dt_Folder.ModelTypeAlias);
+
+    // var selection = Umbraco.ContentAtRoot().FirstOrDefault()?
+    //                 .Children()
+    //                 .
+    //                 .Where(x => x.ContentType.Alias == Form_ContactUs.ModelTypeAlias && x.IsVisible(PublishedValueFallback))
+    //                 .FirstOrDefault();
+
+    // var form = Umbraco.ContentAtRoot().FirstOrDefault()
+    //             .ChildrenOfType(Form_ContactUs.ModelTypeAlias)
+    //             .FirstOrDefault();
+    // if (selection != null)
+    // {
+    //     contact_us.FormID = selection.Id;
+    // }
+}
+
+<section class="map-sec">
+    <div class="container ">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="content-box">
+                    <div class="mapFrom">
+                        <iframe src="@Model.Content.Value("mapLocation").ToStringNull()" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                    <div class="contact-us">
+                        <h4>
+                            @Model.Content.Value("title").ToStringNull()
+                        </h4>
+                        <div class="details">
+                            <ul>
+                                <li>
+                                    <a href="#">
+                                        <div class="icon-bx">
+                                            <img src="/css/assets/images/shared/call-green.svg" alt="">
+                                        </div>
+                                        <span>
+                                            @Model.Content.Value("telephone").ToStringNull()
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="mailto:@(Model.Content.Value("email").ToStringNull())">
+                                        <div class="icon-bx">
+                                            <img src="/css/assets/images/shared/mail-open-love-green.svg" alt="">
+                                        </div>
+                                        <span>
+                                            @Model.Content.Value("email").ToStringNull()
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <div class="icon-bx">
+                                            <img src="/css/assets/images/shared/location-pin-green.svg" alt="">
+                                        </div>
+                                        <span>
+                                            @Model.Content.Value("location").ToStringNull()
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="forms">
+    <div class="container">
+        @await Html.PartialAsync("Form_ContactUs_Ajax", contact_us)
+    </div>
+</section>
+
+@*<script src="/scripts/js/jquery.min.3.4.1.js"></script>*@
+<script src="/scripts/validation/jQueryV3.5.js"></script>
+<script src="/scripts/validation/jquery.unobtrusive-ajax.min.js"></script>
+<script src="/scripts/validation/jquery.validate.min.js"></script>
+<script src="/scripts/validation/jquery.validate.unobtrusive.min.js"></script>
