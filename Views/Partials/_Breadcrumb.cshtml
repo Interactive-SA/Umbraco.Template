@@ -1,0 +1,129 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Routing
+@using Umbraco.Extensions
+
+@{
+    bool IsArabic = true;
+    string Lang_URL = "/";
+
+    if (Model != null && Model.GetCultureFromDomains() != null && !string.IsNullOrEmpty(Model.GetCultureFromDomains()))
+    {
+        if (Model.GetCultureFromDomains().ToLower().Contains("en"))
+        {
+            IsArabic = false;
+            Lang_URL = "/en";
+        }
+        else
+        {
+            IsArabic = true;
+            Lang_URL = "/";
+        }
+    }
+
+    var title = Model.ToPageTitle();
+    int index = 1;
+    var list = Model.Ancestors<IPublishedContent>().Reverse();
+    var showPageTitle = Model.Value<bool>("showPageTitle");
+    var showBreadcrumb = Model.Value<bool>("showBreadcrumb");
+}
+
+@if (Model != null)
+{
+    @if (showBreadcrumb)
+    {
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <ul class="items">
+                            @* @if (list?.Count() > 0)
+                            {
+                                <li>
+                                    <a href="@(Lang_URL)" class="home">
+                                        <!--<img src="/css/assets/images/shared/Home.svg" alt="">-->
+                                        @SharedHelper.GetDictionaryValue("Home", Umbraco)
+                                    </a>
+                                </li>
+                            } *@
+                            @if (list?.Count() > 0)
+                            {
+                                foreach (var item in list)
+                                {
+                                    var url = item.Url();
+                                    var PageTitle = item.ToPageTitle();
+
+                                    if (index == 1)
+                                    {
+                                        @* if (list?.Count() == 1)
+                                        {
+                                            <li><a href="@url">@PageTitle</a></li>
+                                        } *@
+                                        <li><a href="@url">@PageTitle</a></li>
+                                    }
+                                    else
+                                    {
+                                        if (list?.Count() > 1 && item.ContentType.Alias != Dt_Folder.ModelTypeAlias)
+                                        {
+                                            if (
+                                            item.ContentType.Alias == Dt_News.ModelTypeAlias
+                                            //|| item.ContentType.Alias == Dt_Services.ModelTypeAlias
+                                            )
+                                            {
+                                                showPageTitle = false;
+                                            }
+
+                                            <li><a href="@url">@PageTitle</a></li>
+                                        }
+                                    }
+
+                                    index++;
+
+                                    if (index > list.Count())
+                                    {
+                                        <li><span>@title</span></li>
+                                    }
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Breadcrumb -->
+    }
+    @if (showPageTitle)
+    {
+        <!-- Page Title -->
+        <section class="innerBanner">
+            @* <img src="/css/assets/images/home/bannerHome.png" alt="" class="BgBnr"> *@
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h1 class="titleBnr">
+                            @title
+                        </h1>
+                    </div>
+                    <div class="col-md-6">
+                    </div>
+                </div>
+            </div>
+        </section>
+        @* <section class="services-details Page_Title">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="right-sec ">
+                            <h2 class=" mainTitle">
+                                @title
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section> *@
+        <!-- End Page Title -->
+    }
+}

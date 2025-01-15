@@ -1,0 +1,40 @@
+﻿@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@using Custom.ViewModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
+
+@if (Model.Content.ContentType.Alias == "Widget_ListOfItems")
+{
+    var list = Model.Content.Value("listPaths").ToListIntger2();
+    if (list?.Count > 0)
+    {
+        foreach (var item in list)
+        {
+            var partialViewName = "/Views/" + item.ContentType.Alias.Replace("DT_", "") + ".cshtml";
+
+            var layoutName = Model.Content.Value("layoutName").ToStringNull();
+            if (!string.IsNullOrEmpty(layoutName))
+            {
+                partialViewName = "/Views/" + layoutName + ".cshtml";
+            }
+
+            try
+            {
+                @await Html.PartialAsync(partialViewName, Model)
+            }
+            catch (InvalidOperationException)
+            {
+                <p>
+                    <strong>Could not render component of type: @(item.ContentType.Alias)</strong>
+                    <br />
+                    This likely happened because the partial view <em>@partialViewName</em> could not be found.
+                </p>
+            }
+        }
+    }
+    @* else
+    {
+        @await Html.PartialAsync("_NoRecordsFull")
+    } *@
+}

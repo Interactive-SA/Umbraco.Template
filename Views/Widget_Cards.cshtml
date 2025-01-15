@@ -1,0 +1,43 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@using Custom.ViewModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    var Content = (Widget_Cards)Model.Content;
+    var removeMargin = Model.Content.Value<bool>("removeMargin");
+    var PillarsList = Content?.Cards;
+}
+
+@if (!Content.HideWidget)
+{
+    <section class="textWithCards @(removeMargin ? "merge" : "")">
+        <div class="container">
+            <div class="row">
+
+                @if (PillarsList?.Count > 0)
+                {
+                    foreach (var block in PillarsList)
+                    {
+                        var item = (Elm_Content_Card)block.Content;
+                        <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
+                            <div class="cardCenter">
+                                <div class="logo">
+                                    <img src="@item.Image.Url()" alt="">
+                                </div>
+                                <h2 class="font24">
+                                    @Html.Raw(item.Title)
+                                </h2>
+                                <div class="p18">
+                                    @Html.Raw(item.Details)
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+    </section>
+}

@@ -1,0 +1,50 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Routing
+@using Umbraco.Extensions
+
+@{
+    bool IsArabic = true;
+
+    try
+    {
+        if (Model != null && !string.IsNullOrEmpty(Model.GetCultureFromDomains()))
+        {
+            if (Model.GetCultureFromDomains().ToStringNull().ToLower().Contains("en"))
+            {
+                IsArabic = false;
+            }
+            else
+            {
+                IsArabic = true;
+            }
+
+            var link = (Umbraco.Cms.Core.Models.Link)Model.Value("redirectURL");
+            if (link != null)
+            {
+                Context.Response.Redirect(Url.Content(link.ToLinkURL()));
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+
+    }
+}
+
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="/css/assets/css/bootstrapV5.min.css">
+<!--  Font owl CSS -->
+<link rel="stylesheet" href="/css/assets/css/owl.carousel.min.css" />
+<!-- DGA styles -->
+<link rel="stylesheet" href="/css/assets/css/globals.css">
+<link rel="stylesheet" href="/css/assets/css/styleguide.css">
+<!-- custom style -->
+<link rel="stylesheet" href="/css/assets/css/@(IsArabic ? "styleRTL" : "styleLTR").css">
+
+<!-- shared style -->
+<link rel="stylesheet" href="/css/style.css" />
+<link rel="stylesheet" href="/css/@(IsArabic ? "style_ar" : "style_en").css" />

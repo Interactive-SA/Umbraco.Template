@@ -1,0 +1,6 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@if (!string.IsNullOrEmpty(Model.Value<string>("pageBlockGridDetails").ToStringNull()))
+{
+    @await Html.PartialAsync("blockgrid/default", Model.Value("pageBlockGridDetails"))
+}

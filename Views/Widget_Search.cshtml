@@ -1,0 +1,179 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
+@using Custom.ViewModel
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Cms.Core.Strings
+@using Umbraco.Extensions
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Routing
+@using Umbraco.Cms.Core.Services
+
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IPublishedValueFallback PublishedValueFallback
+@inject IPublishedUrlProvider PublishedUrlProvider
+
+@{
+    #region model
+
+    var query = HttpContextAccessor?.HttpContext?.Request?.Query;
+    var blockModel = new BlockGridViewModel<IPublishedContent>(Model, Umbraco, "Search", query);
+    var List = blockModel.List;
+    var Pager = blockModel.Pager;
+
+    #endregion
+
+    #region filter
+
+    int counttt = 0;
+
+    if (!string.IsNullOrEmpty(blockModel.Pager.Keyword))
+    {
+        var master = (Dt_HomePage)Umbraco.ContentAtRoot().FirstOrDefault();
+        blockModel.Pager.Paths.Add(master.Id);
+        blockModel.GetChildren(Umbraco, PublishedValueFallback);
+    }
+
+    #endregion
+
+    #region pager
+
+    blockModel.SetPager();
+
+    #endregion
+
+    List = blockModel.List;
+    Pager = blockModel.Pager;
+}
+
+<style>
+    .inContent .container .box-white .search-top input[type=search] {
+        background-image: none;
+    }
+    .WSCard {
+        height: auto;
+    }
+    .newsPage .WSCard .p16 {
+        height: auto;
+    }
+</style>
+
+<section class="newsPage">
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-lg-12">
+                <div class="search-top">
+                    <div class="right mb-20">
+                        <input type="search" id="txtKeyword" value="@Pager.Keyword" autocomplete="off" placeholder="@SharedHelper.GetDictionaryValue("NoRecordsSearch", Umbraco)">
+                        <button class="search-area-a" id="btnSearch_TrainingFacilities">
+                            @SharedHelper.GetDictionaryValue("Search", Umbraco)
+                        </button>
+                    </div>
+                    <div class="left hide">
+                        @* @Html.DropDownList("drpOrder", Pager.OrderList, new { @class = "form-select" }) *@
+                    </div>
+                </div>
+                <br /><br />
+            </div>
+
+            @if (List?.Count > 0)
+            {
+                foreach (var item in List)
+                {
+                    <div class="col-md-4">
+                        <div class="WSCard">
+                            <div class="txt">
+                                <h3 class="tite">
+                                    @Html.Raw(item.ToPageTitle().ToTrimLetters(100))
+                                </h3>
+                                @{
+                                    var details = item.Value<IHtmlEncodedString>("Details").ToTrimLetters(100);
+                                }
+                                @if (!string.IsNullOrEmpty(details))
+                                {
+                                    <div class="p16">
+                                        @Html.Raw(details)
+                                    </div>
+                                }
+                                <div class="white-btn">
+                                    <a href="@item.Url()">
+                                        <span>اقرأ المزيد</span>
+                                        <img src="/css/assets/images/shared/arrow-left-black.svg" alt="">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <!-- End Boxes -->
+            }
+            else
+            {
+                @await Html.PartialAsync("_NoRecords")
+            }
+
+        </div>
+
+        @await Html.PartialAsync("_Pager", Pager)
+
+    </div>
+</section>
+
+<form asp-controller="Filter" asp-action="TrainingFacilities" class="hide">
+    @await Html.PartialAsync("_HiddenFields", Pager)
+</form>
+
+<script>
+
+    $(document).ready(function () {
+
+        function search() {
+
+            if ($("#txtKeyword").val() != '') {
+
+            }
+
+            $("#Keyword").val($("#txtKeyword").val());
+            //$("#Order").val($("#drpOrder").val());
+
+            window.location = window.location.href.split("?")[0]
+
+                + "?Page=" + $("#Page").val()
+                //+ "&PageSize=" + $("#PageSize").val()
+                + "&Keyword=" + $("#Keyword").val()
+
+                //+ "&Order=" + $("#Order").val()
+
+                ;
+
+            //$("#btnAjaxFilter").trigger("click");
+        }
+
+        $(".umbPagerLink_@(Pager.PagerName)").click(function () {
+            $("#Page").val($(this).attr("id").replace("page", ""));
+            search();
+        });
+
+        $('#txtKeyword').bind("enterKey", function (e) {
+            $("#Page").val("1");
+            search();
+        });
+        $('#txtKeyword').keyup(function (e) {
+            if (e.keyCode == 13) {
+                $(this).trigger("enterKey");
+            }
+        });
+
+        $("#btnSearch_TrainingFacilities").click(function () {
+            $("#Page").val("1");
+            search();
+        });
+
+        $("#drpOrder").change(function () {
+            $("#Page").val("1");
+            search();
+        });
+    });
+
+</script>

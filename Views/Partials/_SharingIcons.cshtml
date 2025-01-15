@@ -1,0 +1,75 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Routing
+@using Umbraco.Extensions
+
+@{
+    bool ShowSharingIcons = Model.Value<bool>("ShowSharingIcons");
+    // ShowSharingIcons = false;
+}
+
+@if (Model != null && ShowSharingIcons)
+{
+    var url = SharedHelper.PortalPath + Model.Url();
+
+    <!-- start vote -->
+   @*  <div class="vote">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="inner-vote margin-bottom20">
+                        <div class="ques-box">
+                            <div class="img-box">
+                                <img src="/css/assets/images/shared/information-circle-1.svg" alt="">
+                            </div>
+                            <h4>
+                                هل استفدت من المعلومات المقدمة في هذه الصفحة؟
+                            </h4>
+                        </div>
+                        <div class="btn-vote">
+                            <a href="#" class="yes">
+                                نعم
+                            </a>
+                            <a href="#" class="no">
+                                لا
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> *@
+    <!-- end vote -->
+    <!-- start sharing-tools -->
+    <div class="vote">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="inner-vote">
+                        <div class="ques-box">
+                            <div class="img-box">
+                                <img src="/css/assets/images/internal/share.svg" alt="">
+                            </div>
+                            <h4>
+                                @SharedHelper.GetDictionaryValue("Share", Umbraco)
+                            </h4>
+                            <!-- Icons -->
+                            <a href="@Html.Raw("https://www.linkedin.com/cws/share?url=" + url)" target="_blank">
+                                <img src="/css/assets/images/internal/linkedin.svg" alt="">
+                            </a>
+                            <a href="@Html.Raw("https://twitter.com/share?text="+ @SharedHelper.GetDictionaryValue("WebsiteName", Umbraco) +"&url=" + url)" target="_blank">
+                                <img src="/css/assets/images/internal/twitter.svg" alt="">
+                            </a>
+                            <a href="@Html.Raw("https://www.facebook.com/sharer.php?u=" + url)" target="_blank">
+                                <img src="/css/assets/images/internal/facebook.svg" alt="">
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end sharing-tools -->
+}

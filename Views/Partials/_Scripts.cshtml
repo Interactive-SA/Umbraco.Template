@@ -1,0 +1,131 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Routing
+@using Umbraco.Extensions
+
+@{
+    bool IsArabic = true;
+
+    try
+    {
+        if (Model != null && !string.IsNullOrEmpty(Model.GetCultureFromDomains()))
+        {
+            if (Model.GetCultureFromDomains().ToStringNull().ToLower().Contains("en"))
+            {
+                IsArabic = false;
+            }
+            else
+            {
+                IsArabic = true;
+            }
+
+            var link = (Umbraco.Cms.Core.Models.Link)Model.Value("redirectURL");
+            if (link != null)
+            {
+                Context.Response.Redirect(Url.Content(link.ToLinkURL()));
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+
+    }
+}
+
+<!-- Scripts -->
+<script src="/scripts/jQuery.js"></script>
+<script src="/scripts/bootstrap.bundle.minV5.js"></script>
+<script src="/scripts/owl.carousel.min.js"></script>
+<script src="/scripts/jquery.counterup.min.js"></script>
+<script src="/scripts/homeJs.js"></script>
+<script src="/scripts/custom@(IsArabic ? "" : "-en").js"></script>
+
+@*@RenderSection("Script", false)*@
+
+<link rel="stylesheet" href="~/css/datepicker/jquery-ui.css" />
+<script type="text/javascript" src="~/css/datepicker/jquery-ui.js"></script>
+
+<script src="/scripts/custom/formAutoPost.js"></script>
+<script src="/scripts/custom/formAutoChange.js"></script>
+
+<script type="text/javascript" src="/scripts/script.js"></script>
+
+@if (IsArabic)
+{
+    <script type="text/javascript">
+        $(function () {
+            $(".customdate").datepicker({
+                dateFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true,
+                //showButtonPanel: true,
+                //beforeShowDay: function (date) {
+                //    // Sets Weekend Friday and Saturday.
+                //    var weekend = date.getDay() == 5 || date.getDay() == 6;
+                //    return [!weekend, 'myweekend'];
+                //},
+                // Sets Weekend position.
+                firstDay: 7,
+                closeText: "إغلاق",
+                prevText: "&#x3C;السابق",
+                nextText: "التالي&#x3E;",
+                currentText: "اليوم",
+                monthNames: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"],
+                monthNamesShort: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+                dayNames: ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"],
+                dayNamesShort: ["أحد", "اثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة", "سبت"],
+                dayNamesMin: ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"],  //["ح", "ن", "ث", "ر", "خ", "ج", "س"],
+                weekHeader: "أسبوع",
+                isRTL: true,
+                showMonthAfterYear: false,
+                yearSuffix: ""
+            });
+        });
+    </script>
+
+    <script type="text/javascript" src="/scripts/script_ar.js"></script>
+}
+else
+{
+    <script type="text/javascript">
+        $(function () {
+            $(".customdate").datepicker({
+                dateFormat: 'dd-mm-yy',
+                changeMonth: true,
+                changeYear: true,
+                //showButtonPanel: true,
+                //beforeShowDay: function (date) {
+                //    // Sets Weekend Friday and Saturday.
+                //    var weekend = date.getDay() == 5 || date.getDay() == 6;
+                //    return [!weekend, 'myweekend'];
+                //},
+                // Sets Weekend position.
+                firstDay: 7,
+        @*closeText: "إغلاق",
+            prevText: "&#x3C;السابق",
+            nextText: "التالي&#x3E;",
+            currentText: "اليوم",
+            monthNames: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"],
+            monthNamesShort: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+            dayNames: ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"],
+            dayNamesShort: ["أحد", "اثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة", "سبت"],
+            dayNamesMin: ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"],  //["ح", "ن", "ث", "ر", "خ", "ج", "س"],
+            weekHeader: "أسبوع",*@
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ""
+                                });
+                            });
+    </script>
+
+    <script type="text/javascript" src="/scripts/script_en.js"></script>
+}
+
+<script>
+    
+    $(function () {
+        $("#datepicker").datepicker();
+    });
+
+</script>

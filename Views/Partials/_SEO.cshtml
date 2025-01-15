@@ -1,0 +1,73 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+<!--SEO-->
+
+@if (!string.IsNullOrEmpty(Model.Name))
+{
+    <title>
+        @(Model.ToPageTitle()) / @SharedHelper.GetDictionaryValue("WebsiteName", Umbraco)
+    </title>
+}
+
+@if (Model.HasProperty("canonical") && Model.HasValue("canonical"))
+{
+    <link rel="canonical" href="@(Model.Value("canonical"))">
+}
+
+@if (Model.HasProperty("author") && Model.HasValue("author"))
+{
+    <meta name="author" content="@(Model.Value("author"))">
+}
+
+@if (Model.HasProperty("metaDescription") && Model.HasValue("metaDescription"))
+{
+    <meta name="description" content="@(Model.Value("metaDescription"))">
+}
+
+@if (Model.HasProperty("metaKeywords") && Model.HasValue("metaKeywords"))
+{
+    string[] keywordsValue = Model.Value<string[]>("metaKeywords");
+    var keywords = (keywordsValue == null ? "" : String.Join(", ", keywordsValue));
+    <meta name="keywords" content="@keywords" />
+}
+
+@if (Model.HasProperty("metaTagBlock") && Model.HasValue("metaTagBlock"))
+{
+    @Html.Raw((Model.Value("metaTagBlock")))
+}
+
+@if (Model.HasProperty("oGURL") && Model.HasValue("oGURL"))
+{
+    <meta property="og:url" content="@(Model.Value<string>("oGURL"))">
+}
+
+@if (Model.HasProperty("type") && Model.HasValue("type"))
+{
+    <meta property="og:type" content="@(Model.Value<string>("type"))">
+}
+
+@if (Model.HasProperty("oGTitle") && Model.HasValue("oGTitle"))
+{
+    <meta property="og:title" content="@(Model.Value("oGTitle"))">
+}
+
+@if (Model.HasProperty("oGDescription") && Model.HasValue("oGDescription"))
+{
+    <meta property="og:description" content="@(Model.Value("oGDescription"))">
+}
+
+@if (Model.HasProperty("OGImage") && Model.HasValue("OGImage"))
+{
+    var OGImage = Model.Value<IPublishedContent>("OGImage");
+    if (OGImage != null)
+    {
+        <meta property="og:image" content="@OGImage.Url(mode:UrlMode.Absolute)">
+    }
+}
+
+@if (Model.HasProperty("locale") && Model.HasValue("locale"))
+{
+    <meta property="og:locale" content="@(Model.Value<string>("locale"))">
+}
+
+<!--/SEO-->

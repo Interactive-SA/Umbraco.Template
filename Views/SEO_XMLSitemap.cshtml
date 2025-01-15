@@ -1,0 +1,88 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.XMlsitemap>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+
+@{
+    Layout = null;
+    bool IsArabic = SharedHelper.IsArabic;
+    var siteHomePage = Model.Root();
+    Context.Response.ContentType = "text/xml";
+    int maxSiteMapDepth = Model.HasValue("maxSiteMapDepth") ? Model.Value<int>("maxSiteMapDepth") : int.MaxValue;
+
+    //string excludedDocumentTypeList = Model.Value<string>("excludedDocumentTypes");
+
+    //string[] excludedDocumentTypes = (!String.IsNullOrEmpty(excludedDocumentTypeList))
+    //?
+    //excludedDocumentTypeList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToArray() :
+    //new string[] { };
+
+
+    List<string> excludedDocumentTypes = new List<string>();
+
+    excludedDocumentTypes.Add(Dt_PageContent.ModelTypeAlias);
+    excludedDocumentTypes.Add(Dt_Folder.ModelTypeAlias);
+
+    excludedDocumentTypes.Add(Dt_News.ModelTypeAlias);
+    excludedDocumentTypes.Add(Dt_NewsItem.ModelTypeAlias);
+
+    excludedDocumentTypes.Add(Dt_Events.ModelTypeAlias);
+    excludedDocumentTypes.Add(Dt_EventsItem.ModelTypeAlias);
+
+    excludedDocumentTypes.Add(Dt_Services.ModelTypeAlias);
+    excludedDocumentTypes.Add(Dt_ServicesItem.ModelTypeAlias);
+
+    excludedDocumentTypes.Add(Dt_TrainingFacilities.ModelTypeAlias);
+    excludedDocumentTypes.Add(Dt_TrainingFacilitiesItem.ModelTypeAlias);
+
+    excludedDocumentTypes.Add(Dt_AlbumPhotos.ModelTypeAlias);
+    excludedDocumentTypes.Add(Dt_AlbumVideos.ModelTypeAlias);
+
+    excludedDocumentTypes.Add(Dt_Files.ModelTypeAlias);
+    excludedDocumentTypes.Add(Dt_FilesItem.ModelTypeAlias);
+}
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemalocation="http://www.google.com/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+    @{
+        RenderSiteMapUrlEntry(siteHomePage, IsArabic ? "ar" : "en-us");
+        RenderSiteMapUrlEntriesForChildren(siteHomePage, IsArabic ? "ar" : "en-us");
+
+        // RenderSiteMapUrlEntry(siteHomePage, "en-US");
+        // RenderSiteMapUrlEntriesForChildren(siteHomePage, "en-US");
+    }
+</urlset>
+
+@{
+    void RenderSiteMapUrlEntry(IPublishedContent node, string language)
+    {
+        var changeFreq = node.Value("searchEngineChangeFrequency", language, fallback: Fallback.To(Fallback.Ancestors, Fallback.DefaultValue),
+            defaultValue: "monthly");
+        // with the relative priority, this is a per page setting only, so we're not using recursion, so we won't set Fallback.ToAncestors here and we'll default to 0.5 if no value is set
+        var priority = node.HasValue("searchEngineRelativePriority") ? node.Value<string>("searchEngineRelativePriority", language) : "1";
+
+
+
+        <url>
+            <loc>@node.Url(language, mode: UrlMode.Absolute)</loc>
+            <lastmod>@(string.Format("{0:s}+00:00", node.UpdateDate))</lastmod>
+            <changefreq>@changeFreq</changefreq>
+            <priority>@priority</priority>
+        </url>
+    }
+
+    void RenderSiteMapUrlEntriesForChildren(IPublishedContent parentPage, string language)
+    {
+        foreach (var page in parentPage.Children.Where(x => excludedDocumentTypes.Contains(x.ContentType.Alias) &&
+        !x.Value<bool>("hideFromXmlSiteMap", language) && x.Cultures.ContainsKey(language)))
+        {
+            RenderSiteMapUrlEntry(page, language);
+            if (page.Level < maxSiteMapDepth && page.Children.Any(x => !x.Value<bool>("hideFromXmlSiteMap", language) &&
+            x.Cultures.ContainsKey(language)))
+            {
+                RenderSiteMapUrlEntriesForChildren(page, language);
+            }
+        }
+    }
+
+}

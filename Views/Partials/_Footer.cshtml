@@ -1,0 +1,202 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models;
+@using Umbraco.Extensions;
+
+@{
+    var master = (Dt_HomePage)Umbraco.ContentAtRoot().FirstOrDefault();
+    var column1 = master.MenuColumn1;
+    var column2 = master.MenuColumn2;
+    var column3 = master.MenuColumn3;
+    var column4 = master.MenuColumn4;
+    var FooterMenu = master.MenuFooter;
+}
+
+<!-- Start Footer -->
+<footer class="footerDGA">
+    <div class="top-footer">
+        <div class="container container3">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="FooterLinks">
+                        @if (column1?.Count() > 0)
+                        {
+                            foreach (var item in column1.Where(p => p.LinkType == "Title"))
+                            {
+                                <h4 class="headLink @item.LinkCssClass">@item.LinkTitle</h4>
+                            }
+                        }
+                        <ul class="linksList column1">
+                            @if (column1?.Count() > 0)
+                            {
+                                foreach (var item in column1.Where(p => p.LinkType != "Title"))
+                                {
+                                    @Html.Raw(item.LinkType.ToLinkHTML(item.LinkTitle, item.LinkUrl, item.LinkIcon, item.LinkCssClass))
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="FooterLinks">
+                        @if (column2?.Count() > 0)
+                        {
+                            foreach (var item in column2.Where(p => p.LinkType == "Title"))
+                            {
+                                <h4 class="headLink @item.LinkCssClass">@item.LinkTitle</h4>
+                            }
+                        }
+                        <ul class="linksList column2">
+                            @if (column2?.Count() > 0)
+                            {
+                                foreach (var item in column2.Where(p => p.LinkType != "Title"))
+                                {
+                                    @Html.Raw(item.LinkType.ToLinkHTML(item.LinkTitle, item.LinkUrl, item.LinkIcon, item.LinkCssClass))
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="FooterLinks">
+                        @if (column3?.Count() > 0)
+                        {
+                            foreach (var item in column3.Where(p => p.LinkType == "Title"))
+                            {
+                                <h4 class="headLink @item.LinkCssClass">@item.LinkTitle</h4>
+                            }
+                        }
+                        <ul class="linksList column3 with-icons">
+                            @if (column3?.Count() > 0)
+                            {
+                                foreach (var item in column3.Where(p => p.LinkType != "Title"))
+                                {
+                                    @Html.Raw(item.LinkType.ToLinkHTML(item.LinkTitle, item.LinkUrl, item.LinkIcon, item.LinkCssClass))
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="FooterLinks">
+                        @if (column4?.Count() > 0)
+                        {
+                            foreach (var item in column4.Where(p => p.LinkType == "Title"))
+                            {
+                                <h4 class="headLink @item.LinkCssClass">@item.LinkTitle</h4>
+                            }
+                        }
+                        <ul class="linksList column4 social">
+                            @if (column4?.Count() > 0)
+                            {
+                                foreach (var item in column4.Where(p => p.LinkType != "Title"))
+                                {
+                                    @Html.Raw(item.LinkType.ToLinkHTML(item.LinkTitle, item.LinkUrl, item.LinkIcon, item.LinkCssClass))
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="btm-footer">
+        <div class="container container3">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="footer-last">
+
+                        <ul class="dir-links-2">
+                            @if (FooterMenu?.Count() > 0)
+                            {
+                                @foreach (var item in FooterMenu.Where(p => p.LinkType == "Title"))
+                                {
+                                    <li>
+                                        <h4 class="headLink @item.LinkCssClass">@item.LinkTitle</h4>
+                                    </li>
+                                }
+                            }
+                            @if (FooterMenu?.Count() > 0)
+                            {
+                                foreach (var item in FooterMenu.Where(p => p.LinkType != "Title"))
+                                {
+                                    @Html.Raw(item.LinkType.ToLinkHTML(item.LinkTitle, item.LinkUrl, item.LinkIcon, item.LinkCssClass))
+                                }
+                            }
+                        </ul>
+
+                        <div class="copyRights">
+                            @{
+                                string _Copyrights = "جميع الحقوق محفوظة @ #Year#";
+                                if (master != null)
+                                {
+                                    _Copyrights = master?.Copyrights;
+                                }
+                            }
+                            <p>@_Copyrights?.Replace("©#Year#", "© " + DateTime.Now.Year.ToString())</p>
+                        </div>
+                        <div class="copyRights">
+                            <a href="https://interactive.sa/ar/default.aspx?r=dga" target="_blank">
+                                <p>تصميم وتطوير شركة إنتراكتيف العربية السعودية المحدودة</p>
+                            </a>
+                        </div>
+
+                        @* <ul class="linksList FooterMenu dir-links-2">
+                            @if (FooterMenu?.Count() > 0)
+                            {
+                                @foreach (var item in FooterMenu.Where(p => p.LinkType == "Title"))
+                                {
+                                    <li>
+                                        <h4 class="headLink @item.LinkCssClass">@item.LinkTitle</h4>
+                                    </li>
+                                }
+                            }
+                            @if (FooterMenu?.Count() > 0)
+                            {
+                                foreach (var item in FooterMenu.Where(p => p.LinkType != "Title"))
+                                {
+                                    @Html.Raw(item.LinkType.ToLinkHTML(item.LinkTitle, item.LinkUrl, item.LinkIcon, item.LinkCssClass))
+                                }
+                            }
+                        </ul> *@
+
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="logos-box">
+                        <img src="/css/assets/images/shared/logos.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* <div class="btm-footer margin0">
+        <div class="container container3">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="footer-last text-center">
+                        <div class="copyRights">
+                            @{
+                                string _Copyrights = "جميع الحقوق محفوظة @ #Year#";
+                                if (master != null)
+                                {
+                                    _Copyrights = master?.Copyrights;
+                                }
+                            }
+                            <p>@_Copyrights?.Replace("©#Year#", "© " + DateTime.Now.Year.ToString())</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div> *@
+    </div>
+</footer>
+<!-- End Footer -->
+
+<div class="DotNetloading hidehide hidden7" id="DotNetloading" style="display:none;">
+    <div class='uil-ring-css' style='transform:scale(0.79);'>
+        <div></div>
+    </div>
+</div>

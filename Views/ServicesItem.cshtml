@@ -1,0 +1,231 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Dt_ServicesItem>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+
+@{
+    Layout = "Layout_Master.cshtml";
+}
+
+<section class="services-details">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8">
+                <div class="right-sec with-shape">
+                    <div>
+                        @Html.Raw(Model.Description)
+                    </div>
+                    <div class="btn-contaimer">
+                        @{
+                            var ServiceUrl = @Model.ServiceUrl.ToLinkURL("");
+                            bool showServiceUrl = !string.IsNullOrEmpty(ServiceUrl);
+                        }
+                        @if (showServiceUrl)
+                        {
+                            <div class="green-btn">
+                                <a href="@ServiceUrl" target="_blank">
+                                    <span>
+                                        طلب الخدمة
+                                    </span>
+                                </a>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.ServiceUserGuide.ToStringNull()))
+                        {
+                            <div class="black-btn">
+                                <a href="@Model.ServiceUserGuide.ToIconURL()" target="_blank">
+                                    <span>
+                                        دليل المستخدم
+                                    </span>
+                                </a>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.ServiceFile.ToStringNull()))
+                        {
+                            <div class="white-btn-borderd">
+                                <a href="@Model.ServiceFile.ToIconURL()" target="_blank">
+                                    <span>
+                                        اتفاقية مستوى الخدمة
+                                    </span>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="gray-bc"></div>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="service-tabs-sec">
+                    <ul class="nav nav-pills DGA-tabs1" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-get-tab" data-bs-toggle="pill" data-bs-target="#pills-get" type="button" role="tab" aria-controls="pills-get" aria-selected="true">
+                                متطلبات الحصول على الخدمة
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link " id="pills-steps-tab" data-bs-toggle="pill" data-bs-target="#pills-steps" type="button" role="tab" aria-controls="pills-steps" aria-selected="false">
+                                خطوات تنفيذ الخدمة
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link " id="pills-faqs-tab" data-bs-toggle="pill" data-bs-target="#pills-faqs" type="button" role="tab" aria-controls="pills-faqs" aria-selected="false">
+                                الأسئلة الشائعة
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link " id="pills-attachments-tab" data-bs-toggle="pill" data-bs-target="#pills-attachments" type="button" role="tab" aria-controls="pills-attachments" aria-selected="false">
+                                المرفقات
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active " id="pills-get" role="tabpanel" aria-labelledby="pills-get-tab">
+                            <div class="services-listItems">
+                                @Html.Raw(Model.ServiceImplementationSteps)
+                            </div>
+                        </div>
+                        <div class="tab-pane fade " id="pills-steps" role="tabpanel" aria-labelledby="pills-steps-tab">
+                            <div class="services-listItems">
+                                <ul>
+                                    @foreach (BlockListItem block in Model.Steps)
+                                    {
+                                        var item = (Elm_Title)block.Content;
+                                        <li>
+                                            @Html.Raw(item.Title)
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade " id="pills-faqs" role="tabpanel" aria-labelledby="pills-faqs-tab">
+                            <div class="services-listItems">
+                                @if (Model?.Faqs?.Count() > 0)
+                                {
+                                    <ul>
+                                        @foreach (BlockListItem block in Model.Faqs)
+                                        {
+                                            var item = (Elm_Faq)block.Content;
+                                            <li>
+                                                @Html.Raw(item.Question)
+                                                <p>@Html.Raw(item.Answer)</p>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </div>
+                        <div class="tab-pane fade " id="pills-attachments" role="tabpanel" aria-labelledby="pills-attachments-tab">
+                            <div class="services-listItems attachments">
+                                <ul>
+                                    @foreach (BlockListItem block in Model.Attachments)
+                                    {
+                                        var item = (Elm_File)block.Content;
+                                        <li>
+                                            <a href="@item.File.ToIconURL()" target="_blank">
+                                                @Html.Raw(item.Title)
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="left-servDet">
+                    <div class="detail-card">
+                        <div class="title-box">
+                            <img src="/css/assets/images/serv-details/icon-19.svg" alt="">
+                            <h5>
+                                الفئة المستهدفة
+                            </h5>
+                        </div>
+                        <div class="content-box">
+                            <p>
+                                @Html.Raw(Model.TargetGroup)
+                            </p>
+                        </div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="title-box">
+                            <img src="/css/assets/images/serv-details/icon-20.svg" alt="">
+                            <h5 class="title">
+                                لغة الخدمة
+                            </h5>
+                        </div>
+                        <div class="content-box">
+                            <p>
+                                @Html.Raw(Model.ServiceLanguage)
+                            </p>
+                        </div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="title-box">
+                            <img src="/css/assets/images/serv-details/icon-21.svg" alt="">
+                            <h5 class="title">
+                                المدة الزمنية
+                            </h5>
+                        </div>
+                        <div class="content-box">
+                            <p>
+                                @Html.Raw(Model.Duration)
+                            </p>
+                        </div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="title-box">
+                            <img src="/css/assets/images/serv-details/icon-22.svg" alt="">
+                            <h5 class="title">
+                                تكلفة الخدمة
+                            </h5>
+                        </div>
+                        <div class="content-box">
+                            <p>
+                                @Html.Raw(Model.ServiceCost)
+                            </p>
+                        </div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="title-box">
+                            <img src="/css/assets/images/serv-details/icon-22.svg" alt="">
+                            <h5 class="title">
+                                قنوات الدعم
+                            </h5>
+                        </div>
+                        <div class="content-box">
+                            @Html.Raw(Model.SupportChannels)
+                        </div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="title-box">
+                            <img src="/css/assets/images/serv-details/icon-22.svg" alt="">
+                            <h5 class="title">
+                                تطبيقات ذات علاقة
+                            </h5>
+                        </div>
+                        <div class="content-box">
+                            @if (Model?.RelatedApplications?.Count() > 0)
+                            {
+                                <ul>
+                                    @foreach (BlockListItem block in Model.RelatedApplications)
+                                    {
+                                        var item = (Elm_Title)block.Content;
+                                        <li>
+                                            @Html.Raw(item.Title)
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>

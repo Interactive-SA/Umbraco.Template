@@ -1,0 +1,50 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@using Custom.ViewModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    var Content = (Widget_Cards)Model.Content;
+    var removeMargin = Model.Content.Value<bool>("removeMargin");
+    var PillarsList = Content?.Cards;
+}
+
+@if (!Content.HideWidget)
+{
+    <section class="DigitalLibrary @(removeMargin ? "merge" : "")">
+        <div class="container">
+            <div class="row">
+
+                @if (PillarsList?.Count > 0)
+                {
+                    foreach (var block in PillarsList)
+                    {
+                        var item = (Elm_Content_Card)block.Content;
+                        <div class="col-md-4">
+                            <div class="WSCard reportPdf">
+                                <div class="txt">
+                                    <h3 class="tite">
+                                        @Html.Raw(item.Title)
+                                    </h3>
+                                    <div class="date">
+                                        @* <span>pdf</span> *@
+                                        @Html.Raw(item.Details)
+                                    </div>
+                                    <div class="white-btn">
+                                        <a href="@item.Image.Url()" target="_blank">
+                                            <span> تحميل</span>
+                                            <img src="/css/assets/images/shared/pdf.svg" alt="" />
+                                            @* <img src="/css/assets/images/shared/arrow-left-black.svg" alt="" /> *@
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+    </section>
+}

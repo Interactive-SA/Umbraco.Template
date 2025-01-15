@@ -1,0 +1,53 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@using Custom.ViewModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    var item = (Widget_Content)Model.Content;
+}
+
+@if (!item.HideWidget)
+{
+    <section class="main-with-img digital-details @(item.RemoveMargin ? "merge" : "")">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="content-box">
+                        <div class="details-box">
+                            @if (!item.HideTitle)
+                            {
+                                <h2 class="mainTitle">
+                                    @Html.Raw(item.Title)
+                                </h2>
+                            }
+                            @if (!string.IsNullOrEmpty(item.Details.ToStringNull()))
+                            {
+                                <div>
+                                    @Html.Raw(item.Details)
+                                </div>
+                            }
+                            @if (item.URL != null)
+                            {
+                                <div class="green-btn">
+                                    <a href="@item.URL.ToLinkURL()" target="@item.URL.ToLinkTarget()" class="">
+                                        <span>
+                                            @SharedHelper.GetDictionaryValue("Learn More", Umbraco)
+                                        </span>
+                                        <img src="/css/assets/images/shared/arrow-left.svg" alt="">
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="img-box">
+                        <img src="@item.Image.ToIconURL("/css/assets/images/home/digital-details.png")" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

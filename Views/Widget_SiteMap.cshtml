@@ -1,0 +1,106 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
+@using Custom.ViewModel
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@using Umbraco.Cms.Core
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Cms.Core.Routing
+
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IPublishedValueFallback PublishedValueFallback
+@inject IPublishedUrlProvider PublishedUrlProvider
+
+@{
+    var master = (Dt_HomePage)Umbraco.ContentAtRoot().FirstOrDefault();
+
+    List<string> types = new List<string>();
+    types.Add(Dt_PageContent.ModelTypeAlias);
+    types.Add(Dt_Folder.ModelTypeAlias);
+
+    var selection = master?.Children()
+                    .Where(x => x.IsVisible(PublishedValueFallback) && types.Contains(x.ContentType.Alias))
+                    .Where(x => x.Value<Boolean>("ShowInSiteMap") == true)
+                    .ToArray();
+}
+
+<section class="inContent">
+    <div class="container">
+        <div class="box-white">
+            <div class="row">
+                <div class="col-12">
+                    <section class="sitemap">
+                        
+                        @* Ensure that the Current Page has children *@
+                        @if (selection?.Length > 0)
+                        {
+                            @* Get the first page in the children, where the property umbracoNaviHide is not True *@
+                            var naviLevel = selection[0].Level;
+
+                            @* Add in level for a CSS hook *@
+                            <ul class="level-@(naviLevel)">
+
+                                @* Loop through the selection *@
+                                @foreach (var item in selection)
+                                {
+                                    <li>
+                                        <a href="@item.Url(PublishedUrlProvider)">@item.ToPageTitle()</a>
+
+                                        @* if this child page has any children, where the property umbracoNaviHide is not True *@
+                                        @{
+                                            var children = item.Children
+                                            .Where(x => x.IsVisible(PublishedValueFallback) && types.Contains(x.ContentType.Alias))
+                                            .Where(x => x.Value<Boolean>("ShowInSiteMap") == true)
+                                            .ToArray();
+
+                                            if (children.Length > 0)
+                                            {
+                                                @* Call a local method to display the children *@
+                                                ChildPages(children);
+                                            }
+                                        }
+                                    </li>
+                                }
+
+                            </ul>
+                        }
+
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@{
+    void ChildPages(IPublishedContent[] selection)
+    {
+        //Ensure that we have a collection of pages
+        if (selection.Length > 0)
+        {
+            // Get the first page in pages and get the level
+            var naviLevel = selection[0].Level;
+
+            // Add in level for a CSS hook
+            <ul class="level-@(naviLevel)">
+                @foreach (var item in selection)
+                {
+                    <li>
+                        <a href="@item.Url(PublishedUrlProvider)">@item.ToPageTitle()</a>
+
+                        @* if the page has any children, where the property umbracoNaviHide is not True *@
+                        @{
+                            var children = item.Children.Where(x => x.IsVisible(PublishedValueFallback) && types.Contains(x.ContentType.Alias))
+                            .Where(x => x.Value<Boolean>("ShowInSiteMap") == true)
+                            .ToArray();
+                            if (children.Length > 0)
+                            {
+                                @* Recurse and call the ChildPages method to display the children *@
+                                ChildPages(children);
+                            }
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    }
+}

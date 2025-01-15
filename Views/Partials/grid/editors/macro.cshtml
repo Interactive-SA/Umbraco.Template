@@ -1,0 +1,24 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<dynamic>
+
+@* @using Umbraco.Cms.Core.Templates
+@inject HtmlLocalLinkParser HtmlLocalLinkParser;
+@inject HtmlUrlParser HtmlUrlParser;
+@inject HtmlImageSourceParser HtmlImageSourceParser; *@
+
+
+@if (Model?.value is not null)
+{
+    string macroAlias = Model.value.macroAlias.ToString();
+    var parameters = new Dictionary<string,object>();
+    foreach (var mpd in Model.value.macroParamsDictionary)
+    {
+        @* var value = HtmlLocalLinkParser.EnsureInternalLinks(mpd.Value.ToString());
+        value = HtmlUrlParser.EnsureUrls(value);
+        value = HtmlImageSourceParser.EnsureImageSources(value);
+        parameters.Add(mpd.Name, Html.Raw(value)); *@
+
+        parameters.Add(mpd.Name, mpd.Value);
+    }
+
+    @await Umbraco.RenderMacroAsync(macroAlias, parameters)
+}

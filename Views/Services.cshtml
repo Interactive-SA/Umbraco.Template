@@ -1,0 +1,68 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<BlockGridItem>
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@using Custom.ViewModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    var query = HttpContextAccessor?.HttpContext?.Request?.Query;
+    var blockModel = new BlockGridViewModel<Dt_ServicesItem>(Model, Umbraco, Dt_ServicesItem.ModelTypeAlias, query);
+    var List = blockModel.List;
+    List = List.OrderBy(p => p.Order).ToList();
+}
+
+@if (!blockModel.HideWidget)
+{
+    <div class="services-list">
+        <div class="container">
+            <div class="row">
+                @if (List?.Count > 0)
+                {
+                    foreach (var item in List)
+                    {
+                        <div class="col-lg-3 col-md-6">
+                            <div class="serv-list-card">
+                                <div class="img-box">
+                                    <img src="@item.Image.ToIconURL("/css/assets/images/serv-list/honour-star.svg")" alt="">
+                                </div>
+                                <div class="content-box">
+                                    <h4>
+                                        @Html.Raw(item.ToPageTitle())
+                                    </h4>
+                                    <p>
+                                        @Html.Raw(item.Description)
+                                    </p>
+                                </div>
+                                <div class="btn-contaimer">
+
+                                    <div class="white-btn-borderd">
+                                        <a href="@item.Url()">
+                                            <span>
+                                                تفاصيل الخدمة
+                                            </span>
+                                        </a>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(item.ServiceUrl.ToLinkURL("")))
+                                    {
+                                        <div class="green-btn">
+                                            <a href="@item.ServiceUrl.ToLinkURL("")">
+                                                <span>
+                                                    بدء الخدمة
+                                                </span>
+                                                <img src="/css/assets/images/shared/arrow-left.svg" alt="">
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    @await Html.PartialAsync("_NoRecords")
+                }
+            </div>
+        </div>
+    </div>
+}

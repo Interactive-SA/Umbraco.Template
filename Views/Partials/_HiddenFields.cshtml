@@ -1,0 +1,18 @@
+﻿@using NetCore.Models
+
+@model Pager
+
+@{
+    var Pager = Model;
+}
+
+@Html.Hidden("Keyword", Pager.Keyword)
+@Html.Hidden("PageSize", Pager.PageSize)
+@Html.Hidden("Page", Pager.Page)
+@Html.Hidden("SortColumn", "id")
+@Html.Hidden("SortType", "asc")
+@Html.Hidden("PathURL", "")
+@Html.Hidden("PageUdi", Pager.PageUdi)
+
+<button type="button" id="btnAjaxFilter" class="btn btn-primary hide">Search</button>
+
